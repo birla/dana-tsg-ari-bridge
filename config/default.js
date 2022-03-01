@@ -8,10 +8,11 @@ module.exports = {
     rtpServer: {
         host: '127.0.0.1',
         port: '7777',
-        format: 'slin16'
+        format: 'slin',
+        direction: 'both-separate', // allowed values: in, out, both, both-separate
     },
     mqtt: {
-        url: 'mqtt://test.mosquitto.org',
-        topicPrefix: 'danatsg'
+        url: "ws://broker.hivemq.com:8000/mqtt",
+        topicPrefix: 'danatsg-ct'
     }
 }

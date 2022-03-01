@@ -2,7 +2,7 @@ const ariClient = require('ari-client');
 const config = require('config');
 const Pino = require('pino');
 const log = new Pino({
-    name: 'Dana-ARI-Bridge',
+    name: 'Dana-ARI-Bridge-CT',
 });
 const Bridge = require('./lib/Bridge');
 const mqtt = require('async-mqtt');
@@ -80,15 +80,19 @@ async function main() {
 
             await channel.answer();
 
-            currentPlayback.on('PlaybackFinished', () => {
-                bridge.addChannel(channel);
+            currentPlayback.on('PlaybackFinished', async () => {
+                await bridge.addChannel(channel);
+
+		// hand over control back to the dial plan
+                await channel.continueInDialplan();
             });
 
             await channel.play({media: 'sound:beep'}, currentPlayback);
+
         });
 
         client.on('StasisEnd', (event, channel) => {
-
+            log.info({event}, 'channel left our application');
         });
 
         await client.start(ariConfig.appName);
